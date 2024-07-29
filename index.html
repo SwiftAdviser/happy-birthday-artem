@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>С Днем Рождения в стиле Star Wars!</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            overflow: hidden;
+            color: #FFE81F;
+        }
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        #playButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 100px;
+            background: none;
+            border: none;
+            color: #FFE81F;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+        #playButton:hover {
+            color: #FFA500;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+        #content {
+            display: none;
+            font-size: 24px; /* Уменьшенный размер шрифта */
+            text-align: center;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scroll 40s linear infinite; /* Ускорили анимацию */
+            width: 90%; /* Увеличили ширину для лучшего отображения на узких экранах */
+            text-shadow: 0 0 5px #FFE81F;
+            padding: 0 5px; /* Добавили отступы по бокам */
+        }
+
+        @media (min-width: 768px) {
+            #content {
+                font-size: 36px; /* Больший шрифт для широких экранов */
+            }
+        }
+
+        @keyframes scroll {
+            0% { top: 100%; }
+            100% { top: -200%; } /* Увеличили, чтобы текст полностью уходил за экран */
+        }
+
+        #content h1 {
+            font-size: 1.5em;
+            margin-bottom: 0.5em;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="starfield"></canvas>
+    <button id="playButton"><i class="fas fa-play-circle"></i></button>
+    <div id="content">
+        <h1>Дорогой Артем!</h1>
+        <p>В далекой-далекой галактике Харькова...</p>
+        <p>Родилась звезда по имени Артем!</p>
+        <img src="./artem.jpg" alt="Это ты тут, Артем" style="max-width: 100%; height: auto;">
+        <p>Пусть Сила будет с тобой, дорогой,</p>
+        <p>Дарует тебе здоровье джедая,</p>
+        <p>Стойкость мандалорской стали,</p>
+        <p>И напористость имперского крейсера!</p>
+        <br>
+        <p>Пусть твои дела идут, как по гиперпространству,</p>
+        <p>А удача следует за тобой, словно верный дроид!</p>
+        <br>
+        <p>Да пребудет с тобой Сила, дорогой!</p>
+        <p>Обнимаю тебя крепче, чем вуки!</p>
+        <p>С Днем Рождения!</p>
+        <p>С любовью, Рома</p>
+        <br>
+        <p>Я счастлив разделить с тобой это путешествие сквозь время!</p>
+        <p>Спасибо тебе, что ты есть!</p>
+        <br>
+        <img src="./together.jpg" alt="Мы с Артемом" style="max-width: 100%; height: auto;">
+        <br>
+        <p>Приятного круиза, кек, и привет Дарине и семье)</p>
+        <br>
+    </div>
+
+    <script>
+        const playButton = document.getElementById('playButton');
+        const content = document.getElementById('content');
+        const audio = new Audio('https://soundfxcenter.com/movies/star-wars/8d82b5_Star_Wars_Main_Theme_Song.mp3');
+
+        playButton.addEventListener('click', () => {
+            playButton.style.display = 'none';
+            content.style.display = 'block';
+            audio.play();
+        });
+
+        // Improved starfield effect
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const stars = [];
+        for (let i = 0; i < 200; i++) { // Уменьшили количество звезд для лучшей производительности
+            stars.push({
+                x: Math.random() * canvas.width - canvas.width / 2,
+                y: Math.random() * canvas.height - canvas.height / 2,
+                z: Math.random() * canvas.width,
+                o: 0.7 + Math.random() * 0.3 // Увеличили яркость звезд
+            });
+        }
+
+        function drawStars() {
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            stars.forEach(star => {
+                const x = star.x / star.z * canvas.width + canvas.width / 2;
+                const y = star.y / star.z * canvas.height + canvas.height / 2;
+                const size = (1 - star.z / canvas.width) * 2; // Уменьшили максимальный размер звезд
+                const opacity = star.o;
+                
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                ctx.arc(x, y, size, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                star.z -= 0.2; // Увеличили скорость движения звезд
+                if (star.z <= 0) {
+                    star.z = canvas.width;
+                    star.x = Math.random() * canvas.width - canvas.width / 2;
+                    star.y = Math.random() * canvas.height - canvas.height / 2;
+                }
+            });
+        }
+
+        function animate() {
+            drawStars();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
